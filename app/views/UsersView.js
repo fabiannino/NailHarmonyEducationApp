@@ -1,8 +1,11 @@
+/*
+ * (C) Hand and Nail Harmony 2018
+ * Author: Fabian Nino
+ */
 import React from 'react'
 import {Button, Text, View, FlatList, StyleSheet, Platform } from 'react-native'
 import {List} from 'react-native-paper'
-
-import {users} from '../services/api'
+import LoadingModule from '../modules/LoadingModule';
 
 
 
@@ -12,33 +15,41 @@ export default class UsersView extends React.Component {
     headerRight: (
       <Button 
         style={homeStyles.headerRight}
-        onPress={()=>{navigation.navigate('AddUser')}}
+        onPress={()=>{navigation.navigate('AddUser', {eventId:navigation.state.params.key})}}
         title='Add Student'
       />
     )
   })
 
+  state = {
+    loading:true,
+  }
 
-  componentDidMount() {
-    this.props.screenProps.getUsers()
+  async componentDidMount() {
+    await this.props.screenProps.getUsers(this.props.navigation.state.params.key)
+    this.setState({loading:false})
   }
 
 
-  _goToEvent = (id) => {
-    this.props.navigation.navigate('Users', {id})
+  _goToEvent = (user) => {
+    this.props.screenProps.setUser(user);
+    this.props.navigation.navigate('Tests', {user})
   }
  
   _renderListItem = ({item}) => {
-  return (
-    <List.Item
-      title={item.name}
-      left={props=><List.Icon {...props} icon="account-circle" />}
-      onPress={()=>this._goToEvent(item.key)}
-    />
-  )
-}
+    return (
+      <List.Item
+        title={item.name}
+        left={props=><List.Icon {...props} icon="account-circle" />}
+        onPress={()=>this._goToEvent(item)}
+      />
+    )
+  }
 
   render () {
+    if(this.state.loading) {
+      return <LoadingModule />
+    }
     return (
       <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
         <FlatList
@@ -55,7 +66,7 @@ const homeStyles = StyleSheet.create({
   headerButton: {
     ...Platform.select({
       android: {
-        backgroundColor:'red'
+        marginRight:15
       }
     })
   },

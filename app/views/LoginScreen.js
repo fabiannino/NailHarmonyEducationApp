@@ -1,6 +1,11 @@
+/*
+ * (C) Hand and Nail Harmony 2018
+ * Author: Fabian Nino
+ */
 import React from 'react';
 import { View, Button, Text, KeyboardAvoidingView} from 'react-native'
 import {Headline, Title, TextInput, Snackbar} from 'react-native-paper'
+import {CREDENTIALS} from '../services/api'
 
 
 export default class LoginScreen extends React.Component {
@@ -18,11 +23,17 @@ export default class LoginScreen extends React.Component {
     this.setState({password})
   }
 
+  _saveLoginInfo = () => {
+    CREDENTIALS.username = this.state.username
+    CREDENTIALS.password = this.state.password
+  }
+
   _login = () => {
     try {
-      if(this.state.username !== 'nailharmony' || this.state.password !== 'education') {
+      if(this.state.username !== 'fabian' || this.state.password !== '152.064') {
         throw new Error('Wrong Username and Password. Please try again.')
       } else {
+        this._saveLoginInfo()
         this.props.navigation.navigate('Home')
       }
     } catch (err) {

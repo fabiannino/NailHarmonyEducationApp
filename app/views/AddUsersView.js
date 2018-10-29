@@ -1,6 +1,10 @@
+/*
+ * (C) Hand and Nail Harmony 2018
+ * Author: Fabian Nino
+ */
 import React from 'react'
-import {View, StyleSheet} from 'react-native'
-import { Title, TextInput, Card, Button } from 'react-native-paper';
+import {View, Alert} from 'react-native'
+import { Title, TextInput, Card, Button, HelperText } from 'react-native-paper';
 
 import uuidv4 from 'uuid/v4'
 import { addUser } from '../services/api';
@@ -16,7 +20,7 @@ export default class AddUsersView extends React.Component {
     city:'',
     state:'',
     country:'',
-    zipCode:'',
+    zip_code:'',
   }
 
   _updateForm = (field, value) => {
@@ -24,7 +28,15 @@ export default class AddUsersView extends React.Component {
   }
 
   _saveStudent = () => {
-    this.props.screenProps.addUser(this.state)
+    if(this.state.email.length < 7) {
+      Alert.alert('Email Required', 'Email address is required.')
+      return;
+    }
+    if(this.state.name.length < 5) {
+      Alert.alert('Name Required', "Please type the student's name and last name.")
+      return;
+    }
+    this.props.screenProps.addUser(this.state, this.props.navigation.state.params.eventId)
     this.props.navigation.navigate('Users')
   }
   render () {
@@ -34,7 +46,7 @@ export default class AddUsersView extends React.Component {
         flex:1,
         alignSelf:'center',
       }}>
-        <Title>Student Information</Title>
+        <Title style={{marginTop:15, marginBottom:15}}>Student Information</Title>
         <Card style={{marginBottom:15}}>
           <Card.Content>
             <Title>Bio</Title>
@@ -46,15 +58,21 @@ export default class AddUsersView extends React.Component {
             <TextInput
               label="Email"
               value={this.state.email}
-              onChangetext={email=>this._updateForm('email',email)}
+              onChangeText={email=>this._updateForm('email',email)}
               keyboardType='email-address'
             />
             <TextInput
               label="Phone"
               value={this.state.phone}
-              onChangetext={phone=>this._updateForm('phone',phone)}
+              onChangeText={phone=>this._updateForm('phone',phone)}
               keyboardType='phone-pad'
             />
+            <HelperText 
+              type='error'
+              visible={this.state.email.length>3 && !this.state.email.includes('@')}
+            >
+              Email address is invalid!
+            </HelperText>
           </Card.Content>
         </Card>        
         <Card style={{marginBottom:15}}>
@@ -68,26 +86,26 @@ export default class AddUsersView extends React.Component {
             <TextInput
               label="City"
               value={this.state.city}
-              onChangetext={city=>this._updateForm('city',city)}
+              onChangeText={city=>this._updateForm('city',city)}
             />
             <View style={{flexDirection:'row'}}>
               <TextInput
                 style={{flex:1}}
                 label="State"
                 value={this.state.state}
-                onChangetext={state=>this._updateForm('state',state)}
+                onChangeText={state=>this._updateForm('state',state)}
               />
               <TextInput
                 style={{flex:1}}
                 label="Country"
                 value={this.state.country}
-                onChangetext={country=>this._updateForm('country',country)}
+                onChangeText={country=>this._updateForm('country',country)}
               />
               <TextInput
                 style={{flex:1}}
                 label="Zip Code"
-                value={this.state.zipCode}
-                onChangetext={zipCode=>this._updateForm('zipCode',zipCode)}
+                value={this.state.zip_code}
+                onChangeText={zip_code=>this._updateForm('zip_code',zip_code)}
                 keyboardType='numeric'
               />
             </View>

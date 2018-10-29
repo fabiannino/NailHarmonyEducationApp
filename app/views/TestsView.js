@@ -9,27 +9,30 @@ import LoadingModule from '../modules/LoadingModule';
 
 
 
-export default class EventsView extends React.Component {
+export default class TestsView extends React.Component {
+  static navigationOptions = ({navigation}) => ({
+    headerTitle: `Tests for ${navigation.state.params.user.name}`,
+  })
 
-  state = {
-    loading:true,
+  state={
+    loading:true
   }
 
   async componentDidMount() {
-    await this.props.screenProps.getEvents()
+    await this.props.screenProps.getTests()
     this.setState({loading:false})
   }
 
-  _goToEvent = (event) => {
-    this.props.screenProps.setEvent(event)
-    this.props.navigation.navigate('Users', {key:event.key, name:event.name, date:event.date})
+  _goToEvent = (test) => {
+    this.props.screenProps.setTest(test)
+    this.props.navigation.navigate('Test', {key:test.key, name:test.name})
   }
  
   _renderListItem = ({item}) => {
     return (
       <List.Item
         title={item.name}
-        description={item.date.toLocaleString('en-US', {month:'short', day:'numeric', year:'numeric'})}
+        // description={item.date.toLocaleString('en-US', {month:'short', day:'numeric', year:'numeric'})}
         left={props=><List.Icon {...props} icon="folder" />}
         onPress={()=>this._goToEvent(item)}
       />
@@ -42,9 +45,10 @@ export default class EventsView extends React.Component {
     }
     return (
       <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
+        
         <FlatList
           style={{flex:1, alignSelf:'stretch'}}
-          data={this.props.screenProps.events}
+          data={this.props.screenProps.tests}
           renderItem={item=>this._renderListItem(item)}
         />
       </View>
